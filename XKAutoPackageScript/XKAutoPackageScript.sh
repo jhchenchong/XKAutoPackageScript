@@ -51,14 +51,9 @@ cd ..
 project_name=`find . -name *.xcodeproj | awk -F "[/.]" '{print $(NF-1)}'`
 # 获取版本号,内部版本号,bundleID (这里需要注意的是 如果您的Info.plist文件不是默认的工程目录下这里需要修改 例如 我的工程的plist文件是/项目名/项目名/SupportingFiles/Info.plist 对应的要修改为info_plist_path="$project_name/SupportingFiles/$info_plist_name.plist")
 info_plist_path="$project_name/$info_plist_name.plist"
-if [ -d "$info_plist_path" ] ; then
 bundle_version=`/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $info_plist_path`
 bundle_build_version=`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" $info_plist_path`
 bundle_identifier=`/usr/libexec/PlistBuddy -c "Print CFBundleVersion" $info_plist_path`
-else
-echo " ❌  ❌  ❌  ❌  ❌  ❌  无效的Info.plist路径  ❌  ❌  ❌  ❌  ❌  ❌  "
-exit 1
-fi
 
 # 删除旧.xcarchive文件
 rm -rf ~/Desktop/$scheme_name-IPA/$scheme_name.xcarchive
@@ -110,7 +105,7 @@ read parameter
 sleep 0.5
 upload_type="$parameter"
 
-echo "**************************开始编译代码...*********************************"
+echo "\033[36;1m**************************开始编译代码...*********************************\033[0m"
 # 指定输出文件目录不存在则创建
 if [ -d "$export_path" ] ; then
 echo $export_path
@@ -144,13 +139,13 @@ fi
 #  检查是否构建成功
 #  xcarchive 实际是一个文件夹不是一个文件所以使用 -d 判断
 if [ -d "$export_archive_path" ] ; then
-echo " ✅  ✅  ✅  ✅  ✅  ✅  编译成功  ✅  ✅  ✅  ✅  ✅  ✅  "
+echo "\033[36;1m✅  ✅  ✅  ✅  ✅  ✅  编译成功  ✅  ✅  ✅  ✅  ✅  ✅  \033[0m"
 else
-echo " ❌  ❌  ❌  ❌  ❌  ❌  编译失败  ❌  ❌  ❌  ❌  ❌  ❌  "
+echo "\033[36;1m❌  ❌  ❌  ❌  ❌  ❌  编译失败  ❌  ❌  ❌  ❌  ❌  ❌  \033[0m"
 exit 1
 fi
 
-echo "**************************开始导出ipa文件....*********************************"
+echo "\033[36;**************************开始导出ipa文件....*********************************\033[0m"
 xcodebuild  -exportArchive \
             -archivePath ${export_archive_path} \
             -exportPath ${export_ipa_path} \
@@ -161,10 +156,10 @@ mv $export_ipa_path/$scheme_name.ipa $export_ipa_path/$ipa_name.ipa
 
 # 检查文件是否存在
 if [ -f "$export_ipa_path/$ipa_name.ipa" ] ; then
-echo " 🎉  🎉  🎉  🎉  🎉  🎉  ${ipa_name} 打包成功! 🎉  🎉  🎉  🎉  🎉  🎉  "
+echo "\033[36;1m🎉  🎉  🎉  🎉  🎉  🎉  ${ipa_name} 打包成功! 🎉  🎉  🎉  🎉  🎉  🎉  \033[0m"
 open $export_path
 else
-echo " ❌  ❌  ❌  ❌  ❌  ❌  ${ipa_name} 打包失败! ❌  ❌  ❌  ❌  ❌  ❌  "
+echo "\033[36;1m ❌  ❌  ❌  ❌  ❌  ❌  ${ipa_name} 打包失败! ❌  ❌  ❌  ❌  ❌  ❌  \033[0m"
 exit 1
 fi
 # 输出打包总用时
@@ -172,28 +167,28 @@ echo "\033[36;1m使用XKAutoPackageScript打包总用时: ${SECONDS}s \033[0m"
 
 # 上传
 if [[ "${upload_type}" == "1" ]] ; then
-echo " ❌  ❌  ❌  ❌  ❌  ❌  您选择了不上传到内测网站  ❌  ❌  ❌  ❌  ❌  ❌  "
+echo "\033[36;1m ❌  ❌  ❌  ❌  ❌  ❌  您选择了不上传到内测网站  ❌  ❌  ❌  ❌  ❌  ❌  \033[0m"
 elif [[ "${upload_type}" == "2" ]]; then
 curl -F "file=@$export_ipa_path/$ipa_name.ipa" \
 -F "uKey=$pgyer_u_key" \
 -F "_api_key=$pgyer_api_key" \
 "http://www.pgyer.com/apiv1/app/upload"
-echo " ✅  ✅  ✅  ✅  ✅  ✅  上传蒲公英成功  ✅  ✅  ✅  ✅  ✅  ✅  "
+echo "\033[36;1m ✅  ✅  ✅  ✅  ✅  ✅  上传蒲公英成功  ✅  ✅  ✅  ✅  ✅  ✅  \033[0m"
 echo "\033[36;1m使用XKAutoPackageScript打包上传蒲公英总用时: ${SECONDS}s \033[0m"
 elif [[ "${upload_type}" == "3" ]]; then
 fir publish "$export_ipa_path/$ipa_name.ipa" -T ${fir_token}
-echo " ✅  ✅  ✅  ✅  ✅  ✅  上传fir成功    ✅  ✅  ✅  ✅  ✅  ✅  "
+echo "\033[36;1m ✅  ✅  ✅  ✅  ✅  ✅  上传fir成功    ✅  ✅  ✅  ✅  ✅  ✅  \033[0m"
 echo "\033[36;1m使用XKAutoPackageScript打包上传fir总用时: ${SECONDS}s \033[0m"
 elif [[ "${upload_type}" == "4" ]]; then
 curl -F "file=@$export_ipa_path/$ipa_name.ipa" \
 -F "uKey=$pgyer_u_key" \
 -F "_api_key=$pgyer_api_key" \
 "http://www.pgyer.com/apiv1/app/upload"
-echo " ✅  ✅  ✅  ✅  ✅  ✅  上传蒲公英成功  ✅  ✅  ✅  ✅  ✅  ✅  "
+echo "\033[36;1m ✅  ✅  ✅  ✅  ✅  ✅  上传蒲公英成功  ✅  ✅  ✅  ✅  ✅  ✅  \033[0m"
 fir publish "$export_ipa_path/$ipa_name.ipa" -T ${fir_token}
-echo " ✅  ✅  ✅  ✅  ✅  ✅  上传fir成功    ✅  ✅  ✅  ✅  ✅  ✅  "
+echo "\033[36;1m ✅  ✅  ✅  ✅  ✅  ✅  上传fir成功    ✅  ✅  ✅  ✅  ✅  ✅  \033[0m"
 echo "\033[36;1m使用XKAutoPackageScript打包上传蒲公英和fir总用时: ${SECONDS}s \033[0m"
 else
-echo " ❌  ❌  ❌  ❌  ❌  ❌ 您输入的上传内测网站参数无效 ❌  ❌  ❌  ❌  ❌  ❌ "
+echo "\033[36;1m ❌  ❌  ❌  ❌  ❌  ❌ 您输入的上传内测网站参数无效 ❌  ❌  ❌  ❌  ❌  ❌ \033[0m"
 exit 1
 fi
