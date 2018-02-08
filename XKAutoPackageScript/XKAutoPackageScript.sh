@@ -145,7 +145,7 @@ echo "\033[36;1m❌  ❌  ❌  ❌  ❌  ❌  编译失败  ❌  ❌  ❌  ❌  
 exit 1
 fi
 
-echo "\033[36;**************************开始导出ipa文件....*********************************\033[0m"
+echo "\033[36;1m**************************开始导出ipa文件....*********************************\033[0m"
 xcodebuild  -exportArchive \
             -archivePath ${export_archive_path} \
             -exportPath ${export_ipa_path} \
