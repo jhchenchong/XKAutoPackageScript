@@ -8,5 +8,9 @@
 	<string>automatic</string>
 	<key>compileBitcode</key>
 	<false/>
+	<key>destination</key>
+	<string>export</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
 </dict>
 </plist>
